@@ -2,7 +2,9 @@
   (:gen-class)
   (:require [next.jdbc :as jdbc]
             [honeysql.core :as sql]
-            [honeysql.helpers :refer [select from merge-where] :as helpers]))
+            [honeysql.helpers :refer [select from merge-where]]
+            [clojure.data.csv :as csv]
+            [clojure.java.io :as io]))
 
 (defn -main
   "I don't do a whole lot ... yet."
@@ -28,4 +30,19 @@
 
 (with-open [conn (jdbc/get-connection ds)]
   (jdbc/execute! conn (sql/format db-call)))
+
+(defn parse-line
+  [line-vec]
+  (let [[first-name last-name local-id state-id gender] line-vec]
+    {:first-name first-name
+     :last-name last-name
+     :local-id local-id
+     :state-id state-id
+     :gender gender}))
+
+(with-open [reader (io/reader "resources/sample-students.csv")]
+  (doall
+   (->> (csv/read-csv reader)
+        (drop 1)
+        (map parse-line))))
 
