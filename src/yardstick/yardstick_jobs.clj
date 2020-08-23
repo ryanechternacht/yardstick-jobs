@@ -1,8 +1,9 @@
 (ns yardstick.yardstick-jobs
   (:gen-class)
   (:require [next.jdbc :as jdbc]
+            [next.jdbc.sql :as jdbc-sql]
             [honeysql.core :as sql]
-            [honeysql.helpers :refer [select from merge-where]]
+            [honeysql.helpers :refer [select from merge-where insert-into values]]
             [clojure.data.csv :as csv]
             [clojure.java.io :as io]))
 
@@ -24,7 +25,7 @@
 ;               :from [:student]})
 (def db-call (-> (select :*)
                  (from :student)
-                 (merge-where [:= :id 3])))
+                 (merge-where [:= :id 4])))
 
 (sql/format db-call)
 
@@ -46,3 +47,16 @@
         (drop 1)
         (map parse-line))))
 
+(with-open [conn (jdbc/get-connection ds)]
+  (jdbc-sql/insert! conn :student
+                    {:tenant_id 1 :first_name "ryan", :last_name "echternacht", :local_id "123", :state_id "oh123", :gender "m"}))
+
+(def insert-call (-> (insert-into :student)
+                     (values [{:tenant-id 1 :first-name "ryan", :last-name "echternacht", :local-id "123", :state-id "oh123", :gender "m"}
+                              {:tenant-id 1 :first-name "mason", :last-name "cook", :local-id "456", :state-id "oh456", :gender "m"}
+                              {:tenant-id 1 :first-name "grace", :last-name "ooi", :local-id "789", :state-id "oh789", :gender "f"}])))
+
+(sql/format insert-call)
+
+(with-open [conn (jdbc/get-connection ds)]
+  (jdbc/execute! conn (sql/format insert-call)))
