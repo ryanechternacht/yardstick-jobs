@@ -5,7 +5,8 @@
         seancorfield/next.jdbc {:mvn/version "1.0.424"}
         mysql/mysql-connector-java {:mvn/version "5.1.6"}
         clj-time/clj-time {:mvn/version "0.14.2"}
-        org.clojure/data.csv {:mvn/version "1.0.0"}}
+        org.clojure/data.csv {:mvn/version "1.0.0"}
+        honeysql {:mvn/version "1.0.444"}}
  :aliases
  {:test {:extra-paths ["test"]
          :extra-deps {org.clojure/test.check {:mvn/version "1.0.0"}}}

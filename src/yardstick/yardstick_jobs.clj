@@ -1,7 +1,8 @@
 (ns yardstick.yardstick-jobs
   (:gen-class)
   (:require [next.jdbc :as jdbc]
-            [next.jdbc.sql :as sql]))
+            [honeysql.core :as sql]
+            [honeysql.helpers :refer [select from merge-where] :as helpers]))
 
 (defn -main
   "I don't do a whole lot ... yet."
@@ -17,4 +18,14 @@
 
 (def ds (jdbc/get-datasource db-conn))
 
-(sql/query ds ["select * from student"])
+; (def db-call {:select [:*]
+;               :from [:student]})
+(def db-call (-> (select :*)
+                 (from :student)
+                 (merge-where [:= :id 3])))
+
+(sql/format db-call)
+
+(with-open [conn (jdbc/get-connection ds)]
+  (jdbc/execute! conn (sql/format db-call)))
+
