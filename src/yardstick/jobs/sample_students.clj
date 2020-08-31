@@ -2,25 +2,26 @@
   ; (:require [])
   )
 
-(def ^:private columns
-  [{:name :first-name
+(def ^:private attributes
+  [{:name :student/first-name
     :csv-column 0 ; TODO make this an array
     :parse identity} ; TODO make this accept rest
-   {:name :last-name
+   {:name :student/last-name
     :csv-column 1
     :parse identity}
-   {:name :local-id
+   {:name :student/local-id
     :csv-column 2
     :parse identity}
-   {:name :state-id
+   {:name :student/state-id
     :csv-column 3
     :parse identity}
-   {:name :gender
+   {:name :student/gender
     :csv-column 4
     :parse identity}
-   {:name :age
+   {:name :student/age
     :csv-column 5
     :parse #(Integer/parseInt %)}])
 
 (def job
-  {:columns columns})
+  {:attributes attributes
+   :db-table :student})
