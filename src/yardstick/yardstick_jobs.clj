@@ -5,7 +5,9 @@
             [honeysql.core :as sql]
             [honeysql.helpers :refer [select from merge-where insert-into values]]
             [clojure.data.csv :as csv]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [yardstick.jobs.sample-students :as ss]
+            [yardstick.process-job :as pj]))
 
 (defn -main
   "I don't do a whole lot ... yet."
@@ -49,7 +51,7 @@
 
 (with-open [conn (jdbc/get-connection ds)]
   (jdbc-sql/insert! conn :student
-                    {:tenant_id 1 :first_name "ryan", :last_name "echternacht", :local_id "123", :state_id "oh123", :gender "m"}))
+                    {:tenant-id 1 :first-name "ryan", :last-name "echternacht", :local-id "123", :state-id "oh123", :gender "m"}))
 
 (def insert-call (-> (insert-into :student)
                      (values [{:tenant-id 1 :first-name "ryan", :last-name "echternacht", :local-id "123", :state-id "oh123", :gender "m"}
@@ -60,3 +62,9 @@
 
 (with-open [conn (jdbc/get-connection ds)]
   (jdbc/execute! conn (sql/format insert-call)))
+
+(def f (pj/build-parser (:columns ss/job)))
+
+(def col ["ryan" "echternacht" "123" "oh123" "m"])
+
+(f col)
