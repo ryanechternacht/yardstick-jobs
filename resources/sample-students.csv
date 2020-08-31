@@ -1,4 +1,4 @@
-first name,last name,local id,state id,gender
-ryan,echternacht,123,oh123,m
-mason,cook,456,oh456,m
-grace,ooi,789,oh789,f
+first name,last name,local id,state id,gender,age
+ryan,echternacht,123,oh123,m,31
+mason,cook,456,oh456,m,32
+grace,ooi,789,oh789,f,27

@@ -56,6 +56,8 @@
 
 (def f (pj/build-parser (:columns ss/job)))
 
-(def col ["ryan" "echternacht" "123" "oh123" "m"])
+(def col ["ryan" "echternacht" "123" "oh123" "m" "31"])
 
 (f col)
+
+(pj/run-job ss/job "resources/sample-students.csv")

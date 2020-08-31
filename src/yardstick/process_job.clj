@@ -10,10 +10,12 @@
      {}
      columns)))
 
-(defn parse-csv [parse-fn file]
+(defn parse-csv [file parse-fn]
   (with-open [reader (io/reader file)]
     (doall
      (->> (csv/read-csv reader)
           (drop 1)
           (map parse-fn)))))
 
+(defn run-job [{:keys [columns]} file]
+  (let [parser (build-parser columns)]))

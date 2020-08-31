@@ -17,7 +17,10 @@
     :parse identity}
    {:name :gender
     :csv-column 4
-    :parse identity}])
+    :parse identity}
+   {:name :age
+    :csv-column 5
+    :parse #(Integer/parseInt %)}])
 
 (def job
   {:columns columns})
