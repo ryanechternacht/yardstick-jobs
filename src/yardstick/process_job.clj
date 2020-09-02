@@ -14,7 +14,7 @@
        (let [parsed (parse (nth line csv-column))]
          (if (s/valid? spec parsed)
            (assoc result col-name parsed)
-           (update result :issues (conj col-name)))))
+           (update result :issues conj col-name))))
      {:tenant-id tenant-id
       :issues []}
      attributes)))
