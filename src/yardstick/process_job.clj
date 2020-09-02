@@ -43,5 +43,11 @@
         rows (parse-csv file parser)
         rows-for-db (->> rows
                          (filter #(empty? (:issues %)))
-                         (map #(dissoc % :issues)))]
-    (insert-rows! ds db-table rows-for-db)))
+                         (map #(dissoc % :issues)))
+        rejected-rows (->> rows
+                           (filter #(seq (:issues %))))]
+    (insert-rows! ds db-table rows-for-db)
+    {:status "success"
+     :accepted-count (count rows-for-db)
+     :rejected-count (count rejected-rows)
+     :rejected rejected-rows}))
