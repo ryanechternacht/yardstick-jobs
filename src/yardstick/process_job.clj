@@ -9,12 +9,13 @@
 (defn build-parser [attributes tenant-id]
   (fn [line]
     (reduce
-     (fn [result {:keys [col-name csv-column parse spec]}]
-       ;; TODO try/catch
-       (let [parsed (parse (nth line csv-column))]
-         (if (s/valid? spec parsed)
-           (assoc result col-name parsed)
-           (update result :issues conj col-name))))
+     (fn [result {:keys [col-name csv-column parse spec] :as col}]
+       (try
+         (let [parsed (parse (nth line csv-column))]
+           (if (s/valid? spec parsed)
+             (assoc result col-name parsed)
+             (update result :issues conj col)))
+         (catch Exception _ (update result :issues conj col))))
      {:tenant-id tenant-id
       :issues []}
      attributes)))
