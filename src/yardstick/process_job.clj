@@ -13,10 +13,10 @@
        (try
          (let [parsed (parse (nth line csv-column))]
            (if (s/valid? spec parsed)
-             (assoc result col-name parsed)
+             (assoc-in result [:row col-name] parsed)
              (update result :issues conj col)))
          (catch Exception _ (update result :issues conj col))))
-     {:tenant-id tenant-id
+     {:row {:tenant-id tenant-id}
       :issues []}
      attributes)))
 
@@ -43,9 +43,10 @@
         rows (parse-csv file parser)
         rows-for-db (->> rows
                          (filter #(empty? (:issues %)))
-                         (map #(dissoc % :issues)))
+                         (map :row))
         rejected-rows (->> rows
-                           (filter #(seq (:issues %))))]
+                           (filter #(seq (:issues %)))
+                           (map :issues))]
     (insert-rows! ds db-table rows-for-db)
     {:status "success"
      :accepted-count (count rows-for-db)
