@@ -6,7 +6,7 @@
             [honeysql.helpers :refer [insert-into values]]
             [next.jdbc :as jdbc]))
 
-(defn build-parser [attributes tenant-id]
+(defn- build-parser [attributes tenant-id]
   (fn [line]
     (reduce
      (fn [result {:keys [col-name csv-column parse spec] :as col}]
@@ -20,23 +20,30 @@
       :issues []}
      attributes)))
 
-(defn parse-csv [file parse-fn]
+(defn- parse-csv [file parse-fn]
   (with-open [reader (io/reader file)]
     (doall
      (->> (csv/read-csv reader)
           (drop 1)
-          (map parse-fn)))))
+          (map parse-fn)
+          (map-indexed (fn [i r] (assoc r :row-num i)))))))
 
-(defn build-insert-rows-sql [table rows]
+(defn- build-insert-rows-sql [table rows]
   (sql/format (-> (insert-into table)
                   (values rows))))
 
-(defn insert-rows! [ds table rows]
+(defn- insert-rows! [ds table rows]
   (with-open [conn (jdbc/get-connection ds)]
     (let [chunks (partition 100 100 [] rows)]
       (doseq [c chunks]
         (let [sql (build-insert-rows-sql table c)]
           (jdbc/execute! conn sql))))))
+
+(defn- display-issue-rows [row]
+  (let [{:keys [row-num issues]} row
+        issues-simplified (map #(select-keys % [:col-name :csv-column]) issues)]
+    {:row-num row-num
+     :issues issues-simplified}))
 
 (defn run-job [{:keys [attributes db-table]} file tenant-id ds]
   (let [parser (build-parser attributes tenant-id)
@@ -46,7 +53,7 @@
                          (map :row))
         rejected-rows (->> rows
                            (filter #(seq (:issues %)))
-                           (map :issues))]
+                           (map display-issue-rows))]
     (insert-rows! ds db-table rows-for-db)
     {:status "success"
      :accepted-count (count rows-for-db)
