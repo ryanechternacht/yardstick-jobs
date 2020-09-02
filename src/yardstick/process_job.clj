@@ -32,12 +32,18 @@
   (sql/format (-> (insert-into table)
                   (values rows))))
 
+(defn insert-rows! [ds table rows]
+  (with-open [conn (jdbc/get-connection ds)]
+    (let [chunks (partition 100 100 [] rows)]
+      (doseq [c chunks]
+        (prn c)
+        (let [sql (build-insert-rows-sql table c)]
+          (jdbc/execute! conn sql))))))
+
 (defn run-job [{:keys [attributes db-table]} file tenant-id ds]
   (let [parser (build-parser attributes tenant-id)
         rows (parse-csv file parser)
         rows-for-db (->> rows
                          (filter #(empty? (:issues %)))
-                         (map #(dissoc % :issues)))
-        sql (build-insert-rows-sql db-table rows-for-db)]
-    (with-open [conn (jdbc/get-connection ds)]
-      (jdbc/execute! conn sql))))
+                         (map #(dissoc % :issues)))]
+    (insert-rows! ds db-table rows-for-db)))
