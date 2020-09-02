@@ -1,26 +1,30 @@
-(ns yardstick.jobs.sample-students
-  ; (:require [])
-  )
+(ns yardstick.jobs.sample-students)
 
 (def ^:private attributes
-  [{:name :student/first-name
+  [{:col-name :student/first-name
     :csv-column 0 ; TODO make this an array
-    :parse identity} ; TODO make this accept rest
-   {:name :student/last-name
+    :parse identity ; TODO make this accept rest
+    :spec string?}
+   {:col-name :student/last-name
     :csv-column 1
-    :parse identity}
-   {:name :student/local-id
+    :parse identity
+    :spec string?}
+   {:col-name :student/local-id
     :csv-column 2
-    :parse identity}
-   {:name :student/state-id
+    :parse identity
+    :spec string?}
+   {:col-name :student/state-id
     :csv-column 3
-    :parse identity}
-   {:name :student/gender
+    :parse identity
+    :spec string?}
+   {:col-name :student/gender
     :csv-column 4
-    :parse identity}
-   {:name :student/age
+    :parse #(String/.toUpperCase %)
+    :spec #{"M" "F"}}
+   {:col-name :student/age
     :csv-column 5
-    :parse #(Integer/parseInt %)}])
+    :parse #(Integer/parseInt %)
+    :spec int?}])
 
 (def job
   {:attributes attributes
