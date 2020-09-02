@@ -27,7 +27,6 @@
           (drop 1)
           (map parse-fn)))))
 
-; TODO batch
 (defn build-insert-rows-sql [table rows]
   (sql/format (-> (insert-into table)
                   (values rows))))
@@ -36,7 +35,6 @@
   (with-open [conn (jdbc/get-connection ds)]
     (let [chunks (partition 100 100 [] rows)]
       (doseq [c chunks]
-        (prn c)
         (let [sql (build-insert-rows-sql table c)]
           (jdbc/execute! conn sql))))))
 

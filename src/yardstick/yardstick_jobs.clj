@@ -1,9 +1,6 @@
 (ns yardstick.yardstick-jobs
   (:gen-class)
   (:require [next.jdbc :as jdbc]
-            [next.jdbc.sql :as jdbc-sql]
-            [honeysql.core :as sql]
-            [honeysql.helpers :refer [select from merge-where insert-into values]]
             [yardstick.jobs.sample-students :as ss]
             [yardstick.process-job :as pj]))
 
