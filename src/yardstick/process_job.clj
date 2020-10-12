@@ -6,7 +6,13 @@
             [honeysql.helpers :refer [insert-into values]]
             [next.jdbc :as jdbc]))
 
-(defn- build-parser [attributes tenant-id]
+(defn- build-parser
+  "Returns a function that takes a vector (normally a parsed line of a csv file) and
+   extracts and validates the columns as defined in attributes. 
+  
+   Returns a map with :row defining the parsed values and :issues logging any issues 
+   found while validating."
+  [attributes tenant-id]
   (fn [line]
     (reduce
      (fn [result {:keys [col-name csv-column parse spec] :as col}]
@@ -36,8 +42,8 @@
   (with-open [conn (jdbc/get-connection ds)]
     (let [chunks (partition 100 100 [] rows)]
       (doseq [c chunks]
-        (let [sql (build-insert-rows-sql table c)]
-          (jdbc/execute! conn sql))))))
+        (let [query (build-insert-rows-sql table c)]
+          (jdbc/execute! conn query))))))
 
 (defn- display-issue-rows [row]
   (let [{:keys [row-num issues]} row
