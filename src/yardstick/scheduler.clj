@@ -1,6 +1,6 @@
 (ns yardstick.scheduler
   (:require [mount.core :as mount]
-            [yardstick.process-job :as pj]
+            [yardstick.dispatch-job :as dj]
             [yardstick.jobs.sample-students :as ss])
   (:import
    (java.util.concurrent Executors ScheduledExecutorService ThreadFactory TimeUnit)))
@@ -32,11 +32,10 @@
         (throw (ex-info "Executor could not be shut down" {}))))
     (prn "Executor shutdown completed")))
 
-(defn- run-job
+;; TODO this gets replaced with a query and such
+(defn- dispatch-job
   [ds]
-  (pj/run-job ss/job "resources/sample-students.csv" 1 ds))
-
-(def executor (create-single-thread-scheduled-executor "world-listener"))
+  (dj/dispatch-job "sample-students|v1.0" {} 1 ds))
 
 (defn mount-state
   [ds]
