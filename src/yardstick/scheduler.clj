@@ -32,14 +32,13 @@
         (throw (ex-info "Executor could not be shut down" {}))))
     (prn "Executor shutdown completed")))
 
-;; TODO this gets replaced with a query and such
-(defn- dispatch-job
+(defn- do-work
   [ds]
-  (dj/dispatch-job "sample-students|v1.0" {} 1 ds))
+  (prn (dj/fetch-jobs ds 1)))
 
 (defn mount-state
   [ds]
   (mount/defstate job-manager
     :start (doto (create-single-thread-scheduled-executor "job-manager")
-             (schedule #(run-job ds) 10 TimeUnit/SECONDS))
+             (schedule #(do-work ds) 10 TimeUnit/SECONDS))
     :stop (shutdown-executor job-manager)))

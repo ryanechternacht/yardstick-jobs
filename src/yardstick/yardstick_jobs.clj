@@ -24,8 +24,3 @@
 (mount/start)
 
 (mount/stop)
-
-;; (mount/defstate world-listener
-;;   :start (doto (create-single-thread-scheduled-executor "world-listener")
-;;            (schedule world-updating-fn 10 TimeUnit/SECONDS))
-;;   :stop (shutdown-executor world-listener))
