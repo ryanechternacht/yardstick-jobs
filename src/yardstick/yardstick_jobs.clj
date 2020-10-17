@@ -2,7 +2,10 @@
   (:gen-class)
   (:require
    [mount.core :as mount]
-   [yardstick.scheduler :as ys]
+   [yardstick.scheduler :as s]
+   [yardstick.fetch-jobs :as fj]
+   [yardstick.channels :as c]
+   [clojure.core.async :refer [<! >! go chan]]
    [next.jdbc :as jdbc]))
 
 (defn -main
@@ -19,8 +22,13 @@
 
 (def ds (jdbc/get-datasource db-conn))
 
-(ys/mount-state ds)
+(s/mount-scheduler #(fj/fetch-and-add-jobs ds))
 
 (mount/start)
 
 (mount/stop)
+
+(go
+  (let [todo (<! c/todo)]
+    (prn "todo recieved")
+    (prn todo)))

@@ -1,7 +1,5 @@
 (ns yardstick.scheduler
-  (:require [mount.core :as mount]
-            [yardstick.dispatch-job :as dj]
-            [yardstick.jobs.sample-students :as ss])
+  (:require [mount.core :as mount])
   (:import
    (java.util.concurrent Executors ScheduledExecutorService ThreadFactory TimeUnit)))
 
@@ -32,13 +30,9 @@
         (throw (ex-info "Executor could not be shut down" {}))))
     (prn "Executor shutdown completed")))
 
-(defn- do-work
-  [ds]
-  (prn (dj/fetch-jobs ds 1)))
-
-(defn mount-state
-  [ds]
-  (mount/defstate job-manager
-    :start (doto (create-single-thread-scheduled-executor "job-manager")
-             (schedule #(do-work ds) 10 TimeUnit/SECONDS))
-    :stop (shutdown-executor job-manager)))
+(defn mount-scheduler
+  [work]
+  (mount/defstate job
+    :start (doto (create-single-thread-scheduled-executor "job")
+             (schedule work 10 TimeUnit/SECONDS))
+    :stop (shutdown-executor job)))

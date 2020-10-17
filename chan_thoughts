@@ -1,0 +1,14 @@
+;; Core.async
+;; scheduled executor always reads <10 from db and keeps track of last read
+;; - track a system capacity in a ref/agent that gets updated as things are marked done/error
+;; - work is put on a buffered TODO chan (capacity = our global capacity?)
+;; TODO chan
+;; worker does blocking take from TODO chan
+;; - could have multiple workers pretty easily (and change this number easily)
+;; - workers download take their config, grab their files, and run
+;; - could have another queue for "doing work" (ready) vs. "downloading files?" (prep)
+;; - just get files in a future, then re-queue them onto a new channel
+;; - overkill for now, but maybe later?
+;; done chan
+;; error chan
+;; - something alts these? and pushes into db and updates global capacity
