@@ -4,7 +4,8 @@
             [clojure.spec.alpha :as s]
             [honeysql.core :as sql]
             [honeysql.helpers :refer [insert-into values]]
-            [next.jdbc :as jdbc]))
+            [next.jdbc :as jdbc]
+            [cheshire.core :as json]))
 
 (defn- build-parser
   "Returns a function that takes a vector (normally a parsed line of a csv file) and
@@ -51,8 +52,9 @@
     {:row-num row-num
      :issues issues-simplified}))
 
-(defn run-job [{:keys [attributes db-table]} file tenant-id ds]
-  (let [parser (build-parser attributes tenant-id)
+(defn run-job [{:keys [attributes db-table]} params tenant-id ds]
+  (let [{file :file} (json/parse-string params true)
+        parser (build-parser attributes tenant-id)
         rows (parse-csv file parser)
         rows-for-db (->> rows
                          (filter #(empty? (:issues %)))

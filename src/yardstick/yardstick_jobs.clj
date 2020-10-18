@@ -4,8 +4,9 @@
    [mount.core :as mount]
    [yardstick.scheduler :as s]
    [yardstick.fetch-jobs :as fj]
+   [yardstick.dispatch-jobs :as dj]
    [yardstick.channels :as c]
-   [clojure.core.async :refer [<! >! go chan]]
+   [clojure.core.async :refer [<! >! go chan go-loop]]
    [next.jdbc :as jdbc]))
 
 (defn -main
@@ -28,7 +29,13 @@
 
 (mount/stop)
 
-(go
-  (let [todo (<! c/todo)]
-    (prn "todo recieved")
-    (prn todo)))
+(def todo-loop (atom true))
+
+(reset! todo-loop false)
+(reset! todo-loop true)
+
+(go-loop [continue @todo-loop]
+  (when continue
+    (let [job (<! c/todo)]
+      (dj/dispatch-job job ds))
+    (recur @todo-loop)))
