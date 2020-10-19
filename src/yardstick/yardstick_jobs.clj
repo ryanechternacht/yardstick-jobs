@@ -41,3 +41,16 @@
       (println "job ran")
       (println job))
     (recur @todo-loop)))
+
+
+(def done-loop (atom true))
+
+(reset! done-loop false)
+(reset! done-loop true)
+
+(go-loop [continue @done-loop]
+  (when continue
+    (let [result (<! c/done)]
+      (println "got done")
+      (println result))
+    (recur @done-loop)))
