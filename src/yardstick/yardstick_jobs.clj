@@ -52,5 +52,6 @@
   (when continue
     (let [result (<! c/done)]
       (println "got done")
-      (println result))
+      (println result)
+      (dj/process-done result ds))
     (recur @done-loop)))

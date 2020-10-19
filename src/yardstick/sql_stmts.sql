@@ -6,5 +6,6 @@ create table job (
 	status varchar(16) not null default 'pending',
 	queued_at timestamp not null default CURRENT_TIMESTAMP,
 	started_at timestamp null,
-	completed_at timestamp null
+	completed_at timestamp null,
+  completition_report text null
 );

@@ -18,9 +18,10 @@
 ;; 1. put work onto the TODO queue
 ;; 2. take work off of the TODO queue and run it
 ;; 3. mark a job as "running" when it starts
+;; 4. put successful jobs on the done queue
+;; 5. process done queue
 
 ;; TODO
 ;; 1. put failed jobs on the error queue
-;; 2. put successful jobs on the done queue
-;; 3. process error queue
-;; 4. process done queue
+;; 2. process error queue
+;; 3. Move go-loops to a place

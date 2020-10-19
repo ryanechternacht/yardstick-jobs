@@ -6,7 +6,8 @@
             [honeysql.helpers :refer [update sset merge-where] :rename {update h-update}]
             [honeysql.core :as hsql]
             [next.jdbc :as jdbc]
-            [next.jdbc.sql :as sql]))
+            [next.jdbc.sql :as sql]
+            [cheshire.core :as json]))
 
 (def jobs {"sample-students|v1.0" ss/job})
 
@@ -26,6 +27,19 @@
 (defn queue-done! [job result]
   (go
     (>! c/done {:job job :result result})))
+
+(defn process-done [{result :result {id :job/id} :job} ds]
+  (with-open [conn (jdbc/get-connection ds)]
+    (let [completion-report (json/generate-string result)
+          query (-> (h-update :job)
+                    (sset {:status "done"
+                           :completed_at :%CURRENT_TIMESTAMP
+                           :completition_report completion-report})
+                    (merge-where [:= :id id]))]
+      (->> query
+           (hsql/format)
+           ((fn [x] (println "json") (println x) x))
+           (sql/query conn)))))
 
 (defn dispatch-job [job ds]
   (try
