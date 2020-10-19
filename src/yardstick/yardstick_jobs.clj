@@ -37,5 +37,7 @@
 (go-loop [continue @todo-loop]
   (when continue
     (let [job (<! c/todo)]
-      (dj/dispatch-job job ds))
+      (dj/dispatch-job job ds)
+      (println "job ran")
+      (println job))
     (recur @todo-loop)))

@@ -12,3 +12,15 @@
 ;; done chan
 ;; error chan
 ;; - something alts these? and pushes into db and updates global capacity
+
+
+;; Done
+;; 1. put work onto the TODO queue
+;; 2. take work off of the TODO queue and run it
+;; 3. mark a job as "running" when it starts
+
+;; TODO
+;; 1. put failed jobs on the error queue
+;; 2. put successful jobs on the done queue
+;; 3. process error queue
+;; 4. process done queue

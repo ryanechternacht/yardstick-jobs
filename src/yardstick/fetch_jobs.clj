@@ -9,7 +9,7 @@
 (def ^:private last-id-seen (atom -1))
 
 (defn fetch-jobs [ds max-capacity last-seen-id]
-  (with-open [connection (jdbc/get-connection ds)]
+  (with-open [conn (jdbc/get-connection ds)]
     (let [query (-> (select :id :tenant_id :name :params)
                     (from :job)
                     (merge-where [:= :status "pending"])
@@ -18,7 +18,7 @@
                     (limit max-capacity))]
       (->> query
            (hsql/format)
-           (sql/query connection)))))
+           (sql/query conn)))))
 
 (defn add-jobs [jobs chan last-id-seen-atom]
   (when (not-empty jobs)
