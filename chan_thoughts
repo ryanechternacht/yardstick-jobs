@@ -22,7 +22,7 @@
 ;; 5. process done queue
 ;; 6. put failed jobs on the error queue
 ;; 7. process error queue
+;; 8. rework go-loops to requeue work if we're bailing
 
 ;; TODO
 ;; 1. Move go-loops to a place
-;; 2. better bailout handling of the go-loops (requeue work on exit)

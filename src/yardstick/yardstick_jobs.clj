@@ -34,16 +34,14 @@
 (reset! todo-loop false)
 (reset! todo-loop true)
 
-(go
-  (>! c/todo 1))
-
 (go-loop [continue @todo-loop]
-  (when continue
-    (let [job (<! c/todo)]
-      (dj/dispatch-job job ds)
-      (println "job ran")
-      (println job))
-    (recur @todo-loop)))
+  (let [job (<! c/todo)]
+    (if continue
+      (do (dj/dispatch-job job ds)
+          (println "job ran")
+          (println job)
+          (recur @todo-loop))
+      (>! c/todo job))))
 
 
 (def done-loop (atom true))
@@ -52,12 +50,14 @@
 (reset! done-loop true)
 
 (go-loop [continue @done-loop]
-  (when continue
-    (let [result (<! c/done)]
-      (println "got done")
-      (println result)
-      (dj/process-done! result ds))
-    (recur @done-loop)))
+  (let [result (<! c/done)]
+    (if continue
+      (do
+        (println "got done")
+        (println result)
+        (dj/process-done! result ds)
+        (recur @done-loop))
+      (>! c/done result))))
 
 
 (def error-loop (atom true))
@@ -66,9 +66,11 @@
 (reset! error-loop true)
 
 (go-loop [continue @error-loop]
-  (when continue
-    (let [result (<! c/error)]
-      (println "got error")
-      (println result)
-      (dj/process-error! result ds))
-    (recur @error-loop)))
+  (let [result (<! c/error)]
+    (if continue
+      (do
+        (println "got error")
+        (println result)
+        (dj/process-error! result ds)
+        (recur @error-loop))
+      (>! c/error result))))
