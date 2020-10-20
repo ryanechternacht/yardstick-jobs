@@ -20,8 +20,9 @@
 ;; 3. mark a job as "running" when it starts
 ;; 4. put successful jobs on the done queue
 ;; 5. process done queue
+;; 6. put failed jobs on the error queue
+;; 7. process error queue
 
 ;; TODO
-;; 1. put failed jobs on the error queue
-;; 2. process error queue
-;; 3. Move go-loops to a place
+;; 1. Move go-loops to a place
+;; 2. better bailout handling of the go-loops (requeue work on exit)
