@@ -1,10 +1,11 @@
 (ns yardstick.fetch-jobs
-  (:require [honeysql.core :as hsql]
+  (:require [clojure.core.async :refer [go >!]]
+            [honeysql.core :as hsql]
             [honeysql.helpers :refer [select from merge-where order-by limit]]
             [next.jdbc :as jdbc]
+            [next.jdbc.sql :as sql]
             [yardstick.channels :as c]
-            [clojure.core.async :refer [go >!]]
-            [next.jdbc.sql :as sql]))
+            [yardstick.scheduler :as s]))
 
 (def ^:private last-id-seen (atom -1))
 
@@ -33,3 +34,6 @@
       (-> (fetch-jobs ds capacity @last-id-seen)
           ((fn [x] (println "jobs to run") (println x) x))
           (add-jobs c/todo last-id-seen)))))
+
+(defn mount-job-fetching [ds]
+  (s/mount-scheduler #(fetch-and-add-jobs ds)))

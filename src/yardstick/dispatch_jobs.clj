@@ -22,7 +22,6 @@
            (sql/query conn)))))
 
 (defn run-job! [{name :job/name params :job/params tenant-id :job/tenant_id} ds]
-  (/ 1 0)
   (pj/run-job (jobs name) params tenant-id ds))
 
 (defn queue-done! [job result]
@@ -57,7 +56,7 @@
            (hsql/format)
            (sql/query conn)))))
 
-(defn dispatch-job [job ds]
+(defn dispatch-job! [job ds]
   (try
     (mark-job-as-running! job ds)
     (let [result (run-job! job ds)]
