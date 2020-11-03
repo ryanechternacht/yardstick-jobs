@@ -5,11 +5,6 @@
             [yardstick.process-channel :as pc]
             [yardstick.fetch-jobs :as fj]))
 
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (println "Hello, World!"))
-
 (def db-conn {:dbtype "mysql"
               :dbname "yardstick"
               :user "root"
@@ -19,10 +14,19 @@
 
 (def ds (jdbc/get-datasource db-conn))
 
-(fj/mount-job-fetching ds)
+(defn setup-components [ds]
+  (fj/mount-job-fetching ds)
+  (pc/mount-channel-processing ds))
 
-(pc/mount-channel-processing ds)
+(comment
+  (setup-components ds)
+  (mount/start)
+  (mount/stop))
 
-(mount/start)
-
-(mount/stop)
+(defn -main
+  "I don't do a whole lot ... yet."
+  [& args]
+  (setup-components ds)
+  (println "components setup")
+  (mount/start)
+  (println "components started"))

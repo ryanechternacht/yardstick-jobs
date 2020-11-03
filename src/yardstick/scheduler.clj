@@ -25,10 +25,10 @@
   (if-not (.awaitTermination executor 10 TimeUnit/SECONDS)
     (do
       (.shutdownNow executor)
-      (prn "Still waiting to shut down executor. Sending interrupt to tasks.")
+      (println "Still waiting to shut down executor. Sending interrupt to tasks.")
       (when-not (.awaitTermination executor 10 TimeUnit/SECONDS)
         (throw (ex-info "Executor could not be shut down" {}))))
-    (prn "Executor shutdown completed")))
+    (println "Executor shutdown completed")))
 
 (defn mount-scheduler
   [work]
