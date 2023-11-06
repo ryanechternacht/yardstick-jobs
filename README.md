@@ -1,6 +1,6 @@
 # yardstick-jobs
 
-FIXME: my new application.
+This was some explatory code that was designed to pull in student test data that would ultimately power yardstick-api. 
 
 ## Installation
 
